@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vendors by Gold Quantity — Digital Gold Wallet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --gold:        #c9a84c;
+            --gold-light:  #e8c96a;
+            --gold-dim:    #8a6c2a;
+            --bg:          #0d0d0d;
+            --surface:     #141414;
+            --surface-2:   #1c1c1c;
+            --border:      #2a2a2a;
+            --text:        #e8e2d5;
+            --text-muted:  #7a7268;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 0 0 80px;
+        }
+
+        header {
+            border-bottom: 1px solid var(--border);
+            padding: 28px 60px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            position: sticky;
+            top: 0;
+            background: rgba(13,13,13,0.92);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        .header-icon {
+            width: 36px; height: 36px;
+            border: 1px solid var(--gold-dim);
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+        }
+
+        .header-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.15rem;
+            font-weight: 400;
+            letter-spacing: 0.12em;
+            color: var(--gold);
+            text-transform: uppercase;
+        }
+
+        .header-subtitle {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        main {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 56px 32px 0;
+        }
+
+        .page-heading { margin-bottom: 48px; }
+
+        .page-heading h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 300;
+            line-height: 1.15;
+        }
+
+        .page-heading h1 em { font-style: italic; color: var(--gold); }
+
+        .page-heading p {
+            margin-top: 10px;
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            font-weight: 300;
+        }
+
+        .search-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px 36px;
+            margin-bottom: 48px;
+        }
+
+        .search-label {
+            display: block;
+            font-size: 0.72rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+        }
+
+        .search-row { display: flex; gap: 12px; align-items: stretch; }
+
+        .input-wrapper { position: relative; flex: 1; }
+
+        .input-unit {
+            position: absolute;
+            left: 16px; top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.78rem;
+            color: var(--gold-dim);
+            font-family: 'Cormorant Garamond', serif;
+            pointer-events: none;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px 16px 14px 52px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            -moz-appearance: textfield;
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+        input[type="number"]:focus {
+            border-color: var(--gold-dim);
+            box-shadow: 0 0 0 3px rgba(201,168,76,0.08);
+        }
+
+        input[type="number"]::placeholder { color: var(--text-muted); }
+
+        .btn-search {
+            background: var(--gold);
+            color: #0d0d0d;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 28px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s;
+            white-space: nowrap;
+        }
+
+        .btn-search:hover { background: var(--gold-light); transform: translateY(-1px); }
+        .btn-search:active { transform: translateY(0); }
+
+        .banner {
+            padding: 14px 20px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-bottom: 32px;
+        }
+
+        .banner.error {
+            background: rgba(122,58,58,0.15);
+            border: 1px solid rgba(122,58,58,0.4);
+            color: #e08080;
+        }
+
+        .results-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 20px;
+        }
+
+        .results-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.25rem;
+            font-weight: 400;
+        }
+
+        .results-count {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .results-count strong { color: var(--gold); font-weight: 500; }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 12px 12px 0 0;
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+
+        thead {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            padding: 14px 20px;
+            font-size: 0.68rem;
+            font-weight: 500;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        th:first-child { padding-left: 28px; }
+        th:last-child  { text-align: right; padding-right: 28px; }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.15s;
+        }
+
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: var(--surface-2); }
+
+        td {
+            padding: 18px 20px;
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        td:first-child { padding-left: 28px; }
+        td:last-child  { text-align: right; padding-right: 28px; }
+
+        .row-num { font-size: 0.78rem; color: var(--text-muted); }
+
+        .vendor-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.05rem;
+            font-weight: 600;
+        }
+
+        .vendor-id { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+
+        .gold-qty {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .gold-qty-unit { font-size: 0.72rem; color: var(--text-muted); margin-left: 2px; }
+
+        .contact-email { font-size: 0.82rem; color: var(--text-muted); }
+
+        .badge {
+            display: inline-block;
+            font-size: 0.68rem;
+            letter-spacing: 0.08em;
+            padding: 3px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            background: rgba(201,168,76,0.1);
+            color: var(--gold);
+            border: 1px solid rgba(201,168,76,0.2);
+        }
+
+        /* ── Pagination Bar ── */
+        .pagination-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .page-info { font-size: 0.8rem; color: var(--text-muted); }
+        .page-info strong { color: var(--text); font-weight: 500; }
+
+        .pagination-controls { display: flex; align-items: center; gap: 8px; }
+
+        .btn-page {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            padding: 8px 16px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s, color 0.2s;
+        }
+
+        .btn-page:hover:not(:disabled) {
+            border-color: var(--gold-dim);
+            color: var(--gold);
+            background: rgba(201,168,76,0.06);
+        }
+
+        .btn-page:disabled { opacity: 0.3; cursor: not-allowed; }
+        .btn-page svg { width: 14px; height: 14px; }
+
+        .page-numbers { display: flex; gap: 4px; }
+
+        .page-num {
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-muted);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .page-num:hover:not(.active) { border-color: var(--gold-dim); color: var(--gold); }
+
+        .page-num.active {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: #0d0d0d;
+            font-weight: 500;
+        }
+
+        /* ── Empty / Welcome States ── */
+        .empty-state, .welcome-state {
+            text-align: center;
+            padding: 72px 32px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .welcome-state { border-style: dashed; }
+
+        .empty-state .icon, .welcome-state .icon {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+            opacity: 0.35;
+        }
+
+        .empty-state h3, .welcome-state h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            font-weight: 400;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+        }
+
+        .empty-state p, .welcome-state p { font-size: 0.85rem; color: var(--text-muted); opacity: 0.7; }
+
+        @media (max-width: 640px) {
+            header { padding: 20px 24px; }
+            main   { padding: 36px 20px 0; }
+            .search-row { flex-direction: column; }
+            .btn-search { width: 100%; }
+            th, td { padding: 12px 14px; }
+            th:first-child, td:first-child { padding-left: 14px; }
+            th:last-child,  td:last-child  { padding-right: 14px; }
+            .pagination-bar { flex-direction: column; gap: 12px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-icon">🪙</div>
+    <div>
+        <div class="header-title">Digital Gold Wallet</div>
+        <div class="header-subtitle">Admin Panel</div>
+    </div>
+</header>
+
+<main>
+
+    <div class="page-heading">
+        <h1>Vendor <em>Gold Holdings</em> Filter</h1>
+        <p>Retrieve all vendors whose total gold stock exceeds a specified threshold.</p>
+    </div>
+
+    <div class="search-card">
+        <label class="search-label" for="quantityInput">Minimum Gold Quantity (grams)</label>
+        <form th:action="@{/vendors/by-quantity}" method="get">
+            <div class="search-row">
+                <div class="input-wrapper">
+                    <span class="input-unit">g</span>
+                    <input
+                            type="number"
+                            id="quantityInput"
+                            name="quantity"
+                            th:value="${quantity}"
+                            placeholder="e.g. 500"
+                            min="0"
+                            step="0.01"
+                            required
+                    />
+                </div>
+                <button type="submit" class="btn-search">Search Vendors</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="banner error" th:if="${error}" th:text="${error}"></div>
+
+    <!-- Results -->
+    <div th:if="${searched and error == null}">
+
+        <div th:if="${vendors != null and !vendors.isEmpty()}">
+
+            <div class="results-meta">
+                <span class="results-title">Results</span>
+                <span class="results-count">
+                    <strong th:text="${count}">0</strong> vendor(s) found
+                    &nbsp;·&nbsp; qty &gt; <strong th:text="${quantity} + 'g'">0g</strong>
+                </span>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Vendor</th>
+                        <th>Contact Email</th>
+                        <th>Phone</th>
+                        <th>Total Gold (g)</th>
+                        <th>Gold Price (₹/g)</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                    <tr th:each="vendor, iterStat : ${vendors}">
+                        <td class="row-num" th:text="${iterStat.index + 1}"></td>
+                        <td>
+                            <div class="vendor-name" th:text="${vendor.vendorName}">Vendor Name</div>
+                            <div class="vendor-id"   th:text="'ID #' + ${vendor.vendorId}">ID #1</div>
+                        </td>
+                        <td><span class="contact-email" th:text="${vendor.contactEmail}">—</span></td>
+                        <td th:text="${vendor.contactPhone}">—</td>
+                        <td>
+                                <span class="gold-qty"
+                                      th:text="${#numbers.formatDecimal(vendor.totalGoldQuantity, 1, 2)}">0.00</span>
+                            <span class="gold-qty-unit">g</span>
+                        </td>
+                        <td th:text="'₹ ' + ${#numbers.formatDecimal(vendor.currentGoldPrice, 1, 2)}">₹ 0.00</td>
+                        <td><span class="badge">Active</span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination Bar -->
+            <div class="pagination-bar">
+                <div class="page-info">
+                    Showing <strong id="rangeStart">—</strong>–<strong id="rangeEnd">—</strong>
+                    of <strong id="totalCount" th:text="${count}">0</strong> vendors
+                </div>
+                <div class="pagination-controls">
+                    <button class="btn-page" id="btnPrev" onclick="changePage(-1)" disabled>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="15 18 9 12 15 6"/>
+                        </svg>
+                        Previous
+                    </button>
+                    <div class="page-numbers" id="pageNumbers"></div>
+                    <button class="btn-page" id="btnNext" onclick="changePage(1)">
+                        Next
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="empty-state" th:if="${vendors == null or vendors.isEmpty()}">
+            <div class="icon">📭</div>
+            <h3>No Vendors Found</h3>
+            <p th:text="'No vendors hold more than ' + ${quantity} + 'g of gold. Try a lower threshold.'"></p>
+        </div>
+
+    </div>
+
+    <div class="welcome-state" th:if="${!searched}">
+        <div class="icon">⚖️</div>
+        <h3>Enter a quantity to begin</h3>
+        <p>Results will appear here once you run a search.</p>
+    </div>
+
+</main>
+
+<script>
+    const ROWS_PER_PAGE = 10;
+    let currentPage = 1;
+
+    const allRows    = Array.from(document.querySelectorAll('#tableBody tr'));
+    const totalRows  = allRows.length;
+    const totalPages = Math.ceil(totalRows / ROWS_PER_PAGE);
+
+    function showPage(page) {
+        currentPage = page;
+
+        const start = (page - 1) * ROWS_PER_PAGE;
+        const end   = Math.min(start + ROWS_PER_PAGE, totalRows);
+
+        // Show only the rows for this page
+        allRows.forEach((row, i) => {
+            row.style.display = (i >= start && i < end) ? '' : 'none';
+        });
+
+        // Update "Showing X–Y of Z" label
+        document.getElementById('rangeStart').textContent = start + 1;
+        document.getElementById('rangeEnd').textContent   = end;
+
+        // Disable Prev / Next at boundaries
+        document.getElementById('btnPrev').disabled = (page === 1);
+        document.getElementById('btnNext').disabled = (page === totalPages);
+
+        renderPageNumbers();
+    }
+
+    function renderPageNumbers() {
+        const container = document.getElementById('pageNumbers');
+        container.innerHTML = '';
+
+        // Show up to 5 page pills centred around currentPage
+        let startP = Math.max(1, currentPage - 2);
+        let endP   = Math.min(totalPages, startP + 4);
+        if (endP - startP < 4) startP = Math.max(1, endP - 4);
+
+        for (let p = startP; p <= endP; p++) {
+            const btn = document.createElement('button');
+            btn.className  = 'page-num' + (p === currentPage ? ' active' : '');
+            btn.textContent = p;
+            btn.onclick = () => showPage(p);
+            container.appendChild(btn);
+        }
+    }
+
+    function changePage(direction) {
+        const next = currentPage + direction;
+        if (next >= 1 && next <= totalPages) showPage(next);
+    }
+
+    // Boot pagination only when the table has rows
+    if (allRows.length > 0) {
+        showPage(1);
+    }
+</script>
+
+</body>
+</html>
