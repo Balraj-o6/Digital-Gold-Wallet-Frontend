@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title th:text="|${portfolio.userName} - Portfolio|">Portfolio</title>
+<style>
+body {
+	font-family: Arial, sans-serif;
+	background-color: #f4f4f4;
+	margin: 0;
+	padding: 20px;
+}
+
+h1 {
+	color: #333;
+}
+
+h2 {
+	color: #555;
+	border-bottom: 2px solid #DAA520;
+	padding-bottom: 6px;
+	margin-top: 30px;
+}
+
+.back-link {
+	display: inline-block;
+	margin-bottom: 20px;
+	color: #DAA520;
+	text-decoration: none;
+	font-size: 14px;
+}
+
+.back-link:hover {
+	text-decoration: underline;
+}
+
+.info-table {
+	width: 100%;
+	max-width: 600px;
+	border-collapse: collapse;
+	background-color: white;
+	border: 1px solid #ccc;
+}
+
+.info-table td {
+	padding: 10px 14px;
+	border-bottom: 1px solid #eee;
+	font-size: 14px;
+}
+
+.info-table td:first-child {
+	font-weight: bold;
+	color: #555;
+	width: 40%;
+	background-color: #fafafa;
+}
+
+.data-table {
+	width: 100%;
+	border-collapse: collapse;
+	background-color: white;
+	border: 1px solid #ccc;
+	font-size: 14px;
+}
+
+.data-table th {
+	background-color: #DAA520;
+	color: white;
+	padding: 10px 14px;
+	text-align: left;
+}
+
+.data-table td {
+	padding: 10px 14px;
+	border-bottom: 1px solid #eee;
+}
+
+.data-table tr:last-child td {
+	border-bottom: none;
+}
+
+.data-table tr:hover {
+	background-color: #fffbee;
+}
+
+.no-data {
+	background-color: white;
+	border: 1px solid #ccc;
+	padding: 16px;
+	color: #999;
+	font-size: 14px;
+}
+
+.summary-box {
+	display: inline-block;
+	background-color: white;
+	border: 1px solid #ccc;
+	border-left: 4px solid #DAA520;
+	padding: 12px 20px;
+	margin-right: 16px;
+	margin-bottom: 16px;
+	min-width: 160px;
+}
+
+.summary-box .label {
+	font-size: 12px;
+	color: #888;
+	margin-bottom: 4px;
+}
+
+.summary-box .value {
+	font-size: 20px;
+	font-weight: bold;
+	color: #333;
+}
+</style>
+</head>
+<body>
+
+	<a href="/" class="back-link">&larr; Back to Search</a>
+
+	<h1 th:text="|${portfolio.userName}'s Portfolio|">User Portfolio</h1>
+	<p style="color: #888; font-size: 14px;">
+		User ID: <span th:text="${portfolio.userId}">-</span> | <span
+			th:text="${portfolio.userEmail}">-</span>
+	</p>
+
+	<!-- Summary boxes -->
+	<h2>Gold Summary</h2>
+	<div>
+		<div class="summary-box">
+			<div class="label">Account Balance</div>
+			<div class="value"
+				th:text="|&#8377; ${#numbers.formatDecimal(portfolio.balance, 1, 'COMMA', 2, 'POINT')}|">&#8377;
+				0.00</div>
+		</div>
+		<div class="summary-box">
+			<div class="label">Virtual Gold</div>
+			<div class="value"
+				th:text="|${#numbers.formatDecimal(portfolio.totalVirtualGold, 1, 4)} g|">0.0000
+				g</div>
+		</div>
+		<div class="summary-box">
+			<div class="label">Physical Gold</div>
+			<div class="value"
+				th:text="|${#numbers.formatDecimal(portfolio.totalPhysicalGold, 1, 4)} g|">0.0000
+				g</div>
+		</div>
+		<div class="summary-box">
+			<div class="label">Total Gold</div>
+			<div class="value"
+				th:text="|${#numbers.formatDecimal(portfolio.totalGold, 1, 4)} g|">0.0000
+				g</div>
+		</div>
+	</div>
+
+	<!-- User Details -->
+	<h2>User Details</h2>
+	<table class="info-table">
+		<tr>
+			<td>Name</td>
+			<td th:text="${portfolio.userName}">—</td>
+		</tr>
+		<tr>
+			<td>Email</td>
+			<td th:text="${portfolio.userEmail}">—</td>
+		</tr>
+		<tr>
+			<td>User ID</td>
+			<td th:text="${portfolio.userId}">—</td>
+		</tr>
+		<tr>
+			<td>Balance</td>
+			<td
+				th:text="|&#8377; ${#numbers.formatDecimal(portfolio.balance, 1, 'COMMA', 2, 'POINT')}|">—</td>
+		</tr>
+	</table>
+
+	<!-- Address -->
+	<h2>Registered Address</h2>
+	<table class="info-table" th:if="${portfolio.address}">
+		<tr>
+			<td>Street</td>
+			<td th:text="${portfolio.address.street}">—</td>
+		</tr>
+		<tr>
+			<td>City</td>
+			<td th:text="${portfolio.address.city}">—</td>
+		</tr>
+		<tr>
+			<td>State</td>
+			<td th:text="${portfolio.address.state}">—</td>
+		</tr>
+		<tr>
+			<td>Postal Code</td>
+			<td th:text="${portfolio.address.postalCode}">—</td>
+		</tr>
+		<tr>
+			<td>Country</td>
+			<td th:text="${portfolio.address.country}">—</td>
+		</tr>
+	</table>
+	<p class="no-data" th:unless="${portfolio.address}">No address on
+		record.</p>
+
+	<!-- Virtual Gold Holdings -->
+	<h2>Virtual Gold Holdings</h2>
+	<table class="data-table"
+		th:if="${portfolio.virtualHoldings != null and !#lists.isEmpty(portfolio.virtualHoldings)}">
+		<thead>
+			<tr>
+				<th>Holding ID</th>
+				<th>Vendor</th>
+				<th>Branch ID</th>
+				<th>Quantity (g)</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="h : ${portfolio.virtualHoldings}">
+				<td th:text="${h.holdingId}">—</td>
+				<td th:text="${h.vendorName}">—</td>
+				<td th:text="${h.branchId}">—</td>
+				<td th:text="${#numbers.formatDecimal(h.quantity, 1, 4)}">—</td>
+			</tr>
+		</tbody>
+	</table>
+	<p class="no-data"
+		th:unless="${portfolio.virtualHoldings != null and !#lists.isEmpty(portfolio.virtualHoldings)}">
+		No virtual gold holdings found.</p>
+
+	<!-- Physical Gold Transactions -->
+	<h2>Physical Gold Transactions</h2>
+	<table class="data-table"
+		th:if="${portfolio.physicalTransactions != null and !#lists.isEmpty(portfolio.physicalTransactions)}">
+		<thead>
+			<tr>
+				<th>Txn ID</th>
+				<th>Vendor Branch</th>
+				<th>Quantity (g)</th>
+				<th>Delivery Address</th>
+				<th>Request Date</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="t : ${portfolio.physicalTransactions}">
+				<td th:text="${t.transactionId}">—</td>
+				<td th:text="${t.branchName}">—</td>
+				<td th:text="${#numbers.formatDecimal(t.quantity, 1, 4)}">—</td>
+				<td th:if="${t.deliveryAddress}"
+					th:text="${t.deliveryAddress.street + ', ' + t.deliveryAddress.city + ', ' + t.deliveryAddress.state + ' ' + t.deliveryAddress.postalCode}">
+					—</td>
+				<td th:unless="${t.deliveryAddress}">—</td>
+				<td
+					th:text="${t.requestDate != null ? #temporals.format(t.requestDate, 'dd MMM yyyy, HH:mm') : '—'}">—</td>
+			</tr>
+		</tbody>
+	</table>
+	<p class="no-data"
+		th:unless="${portfolio.physicalTransactions != null and !#lists.isEmpty(portfolio.physicalTransactions)}">
+		No physical gold transactions found.</p>
+
+</body>
+</html>
