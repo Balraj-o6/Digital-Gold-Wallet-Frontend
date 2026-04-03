@@ -18,11 +18,18 @@ public class PortfolioController {
 		this.webClient = WebClient.builder().baseUrl(backendBaseUrl).build();
 	}
 
+
 	@GetMapping("/")
-	public String home() {
+	public String dashboard() {
+		return "dashboard";
+	}
+
+	@GetMapping("/portfolio-lookup")
+	public String portfolioLookup() {
 		return "index";
 	}
 
+	
 	@GetMapping("/portfolio")
 	public String getPortfolio(@RequestParam(required = false) Integer userId, Model model) {
 		if (userId == null) {
