@@ -11,18 +11,20 @@ import java.util.Arrays;
 @Controller
 public class TransactionViewController {
 
-    @GetMapping("/branch/view/{branchId}")
-    public String getTransactions(@PathVariable Integer branchId, Model model) {
+    @GetMapping("/branch/view")
+    public String getTransactionsByParam(@RequestParam(required = false) Integer branchId, Model model) {
 
-        RestTemplate restTemplate = new RestTemplate();
+        if (branchId != null) {
+            RestTemplate restTemplate = new RestTemplate();
 
-        String url = "http://localhost:8085/api/transactions/branch/" + branchId;
+            String url = "http://localhost:8085/api/transactions/branch/" + branchId;
 
-        TransactionHistoryDTO[] response =
-                restTemplate.getForObject(url, TransactionHistoryDTO[].class);
+            TransactionHistoryDTO[] response =
+                    restTemplate.getForObject(url, TransactionHistoryDTO[].class);
 
-        model.addAttribute("transactions", Arrays.asList(response));
-        model.addAttribute("branchId", branchId);
+            model.addAttribute("transactions", Arrays.asList(response));
+            model.addAttribute("branchId", branchId);
+        }
 
         return "transactions";
     }

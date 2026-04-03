@@ -1,7 +1,5 @@
 package com.example.demo.dto;
 
-import java.time.LocalDateTime;
-
 public class TransactionHistoryDTO {
 
     private Integer transactionId;
@@ -10,6 +8,8 @@ public class TransactionHistoryDTO {
     private String type;
     private String status;
     private Double amount;
+    private Double quantity;
+    private String date;
 
     public Integer getTransactionId() { return transactionId; }
     public void setTransactionId(Integer transactionId) { this.transactionId = transactionId; }
@@ -28,4 +28,10 @@ public class TransactionHistoryDTO {
 
     public Double getAmount() { return amount; }
     public void setAmount(Double amount) { this.amount = amount; }
+
+    public Double getQuantity() { return quantity; }
+    public void setQuantity(Double quantity) { this.quantity = quantity; }
+
+    public String getDate() { return date; }
+    public void setDate(String date) { this.date = date; }
 }
