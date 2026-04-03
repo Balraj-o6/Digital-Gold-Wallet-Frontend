@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Vendor Gold Holdings</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            background: #0b0b0b;
+            color: #e6e6e6;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .container {
+            width: 85%;
+            margin: auto;
+            padding-top: 40px;
+        }
+
+        /* HEADER */
+        .title {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        .title span {
+            color: #d4af37;
+            font-style: italic;
+        }
+
+        .subtitle {
+            color: #888;
+            margin-bottom: 30px;
+        }
+
+        /* CARD */
+        .card {
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card-label {
+            color: #888;
+            font-size: 12px;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .search-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        input {
+            width: 80%;
+            padding: 14px;
+            background: #0b0b0b;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #d4af37;
+        }
+
+        button {
+            background: #d4af37;
+            color: black;
+            padding: 14px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #c19b2e;
+        }
+
+        /* RESULTS HEADER */
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .results-header h2 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .results-count {
+            color: #d4af37;
+            font-size: 14px;
+        }
+
+        /* TABLE */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #111;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        th {
+            text-align: left;
+            padding: 15px;
+            color: #888;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        td {
+            padding: 18px 15px;
+            border-top: 1px solid #222;
+        }
+
+        tr:hover {
+            background: #151515;
+        }
+
+        .gold {
+            color: #d4af37;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- TITLE -->
+    <div class="title">
+        Vendor <span>Gold Holdings</span> Filter
+    </div>
+    <div class="subtitle">
+        Retrieve all transactions for a specific branch.
+    </div>
+
+    <!-- SEARCH FORM -->
+    <div class="card">
+        <div class="card-label">BRANCH ID</div>
+
+        <!-- 🔥 THIS MATCHES YOUR CONTROLLER -->
+        <form action="/physical-gold/search" method="get" class="search-box">
+            <input type="number"
+                   name="branchId"
+                   placeholder="Enter Branch ID..."
+                   th:value="${branchId}"
+                   required>
+
+            <button type="submit">Search Vendors</button>
+        </form>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="results-header" th:if="${transactions}">
+        <h2>Results</h2>
+        <div class="results-count"
+             th:text="${#lists.size(transactions)} + ' TRANSACTIONS FOUND'"></div>
+    </div>
+
+    <!-- TABLE -->
+    <table th:if="${transactions}">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>USER</th>
+            <th>BRANCH</th>
+            <th>GOLD (g)</th>
+            <th>REQUEST DATE</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="txn, iterStat : ${transactions}">
+            <td th:text="${iterStat.index + 1}"></td>
+            <td th:text="${txn.userName}"></td>
+            <td th:text="${txn.branchName}"></td>
+            <td class="gold" th:text="${txn.quantity}"></td>
+            <td th:text="${#temporals.format(txn.requestDate, 'dd-MM-yyyy HH:mm')}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+</body>
+</html>
