@@ -35,7 +35,7 @@ public class TopUserViewController {
         return "top-holdings";
     }
 
-    
+    // Home page redirect
     @GetMapping("/top")
     public String home() {
         return "redirect:/top-holdings";
