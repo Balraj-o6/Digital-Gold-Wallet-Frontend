@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Physical Transactions</title>
+
+    <style>
+        body {
+            background:#0b0b0b;
+            color:#ffd700;
+            font-family:Arial;
+            margin:40px;
+        }
+
+        h2 {
+            margin-bottom:10px;
+        }
+
+        .card {
+            background:#121212;
+            padding:20px;
+            border-radius:10px;
+            margin-bottom:20px;
+        }
+
+        input {
+            padding:12px;
+            background:#000;
+            color:#fff;
+            border:1px solid #333;
+            width:260px;
+            border-radius:5px;
+        }
+
+        button {
+            padding:12px 20px;
+            background:#c9a227;
+            border:none;
+            margin-left:10px;
+            cursor:pointer;
+            border-radius:5px;
+        }
+
+        table {
+            width:100%;
+            margin-top:10px;
+            border-collapse:collapse;
+        }
+
+        th, td {
+            padding:12px;
+            border-bottom:1px solid #333;
+        }
+
+        th {
+            color:#aaa;
+        }
+
+        tr:hover {
+            background:#1a1a1a;
+        }
+
+        .pagination {
+            margin-top:20px;
+        }
+
+        .pagination button {
+            margin-right:5px;
+        }
+
+        .count {
+            float:right;
+            color:#c9a227;
+        }
+
+        .no-data {
+            margin-top:20px;
+            padding:15px;
+            background:#1a1a1a;
+            border-radius:8px;
+            color:#bbb;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>Physical Gold Transactions</h2>
+<p style="color:#aaa;">Search physical gold transactions by city</p>
+
+<div class="card">
+    <form th:action="@{/physical/view}" method="get">
+        <input type="text" name="city" placeholder="Enter city (e.g. Mumbai)" required>
+        <button type="submit">Search</button>
+    </form>
+</div>
+
+<!-- RESULTS BLOCK -->
+<div th:if="${transactions != null}">
+
+    <!-- NO DATA -->
+    <div class="no-data"
+         th:if="${#lists.isEmpty(transactions)}">
+        No transactions found for this city.
+    </div>
+
+    <!-- TABLE -->
+    <div th:if="${!#lists.isEmpty(transactions)}">
+
+        <span class="count"
+              th:text="${#lists.size(transactions)} + ' RECORDS'"></span>
+
+        <table>
+
+            <tr>
+                <th>#</th>
+                <th>User</th>
+                <th>Branch</th>
+                <th>Quantity (g)</th>
+                <th>Date</th>
+                <th>City</th>
+            </tr>
+
+            <tr th:each="txn, stat : ${transactions}">
+                <td th:text="${stat.count + (currentPage * pageSize)}"></td>
+                <td th:text="${txn.userName}"></td>
+                <td th:text="${txn.branchName}"></td>
+                <td th:text="${txn.quantity}"></td>
+                <td th:text="${#temporals.format(txn.requestDate, 'dd-MM-yyyy HH:mm')}"></td>
+                <td th:text="${txn.deliveryAddress.city}"></td>
+            </tr>
+
+        </table>
+
+        <!-- PAGINATION -->
+        <div class="pagination">
+
+            <a th:if="${currentPage > 0}"
+               th:href="@{/physical/view(city=${city}, page=${currentPage-1})}">
+                <button>Prev</button>
+            </a>
+
+            <span th:text="'Page ' + (${currentPage}+1)"></span>
+
+            <a th:if="${hasNext}"
+               th:href="@{/physical/view(city=${city}, page=${currentPage+1})}">
+                <button>Next</button>
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
