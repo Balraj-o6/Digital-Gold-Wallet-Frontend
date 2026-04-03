@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Vendor Gold Holdings</title>
+
+    <style>
+        body {
+            background:#0b0b0b;
+            color:#e6c200;
+            font-family: Arial;
+            margin:40px;
+        }
+
+        h1 { font-size:32px; }
+        .gold { color:#ffd700; }
+
+        .card {
+            background:#121212;
+            padding:20px;
+            border-radius:10px;
+            margin-top:20px;
+        }
+
+        input {
+            width:70%;
+            padding:12px;
+            background:#000;
+            border:1px solid #333;
+            color:#fff;
+            border-radius:5px;
+        }
+
+        button {
+            padding:12px 20px;
+            background:#c9a227;
+            border:none;
+            color:#000;
+            border-radius:5px;
+            cursor:pointer;
+            margin-left:10px;
+        }
+
+        table {
+            width:100%;
+            margin-top:20px;
+            border-collapse:collapse;
+        }
+
+        th, td {
+            padding:12px;
+            border-bottom:1px solid #333;
+            text-align:left;
+        }
+
+        th { color:#aaa; }
+
+        tr:hover { background:#1a1a1a; }
+
+        .right {
+            float:right;
+            color:#c9a227;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Vendor <span class="gold">Gold Holdings</span> Filter</h1>
+<p>Retrieve all transactions for a specific branch.</p>
+
+<div class="card">
+
+    <form th:action="@{/branch/view}" method="get">
+
+        <label>BRANCH ID</label><br><br>
+
+        <input type="number" name="branchId" placeholder="Enter branch id" required>
+
+        <button type="submit">Search Vendors</button>
+
+    </form>
+
+</div>
+
+<h2>Results</h2>
+
+<span class="right"
+      th:if="${transactions != null}"
+      th:text="${#lists.size(transactions)} + ' TRANSACTIONS FOUND'"></span>
+
+<table th:if="${transactions != null}">
+
+    <tr>
+        <th>#</th>
+        <th>User</th>
+        <th>Vendor</th>
+        <th>Gold (g)</th>
+        <th>Request Date</th>
+    </tr>
+
+    <tr th:each="txn, stat : ${transactions}">
+        <td th:text="${stat.count}"></td>
+        <td th:text="${txn.userName}"></td>
+        <td th:text="${txn.vendorName}"></td>
+        <td th:text="${txn.quantity}"></td>
+        <td th:text="${txn.date}"></td>
+    </tr>
+
+</table>
+
+</body>
+</html>
