@@ -3,148 +3,230 @@
 <head>
     <title>Physical Transactions</title>
 
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
     <style>
         body {
             background:#0b0b0b;
             color:#ffd700;
-            font-family:Arial;
-            margin:40px;
+            font-family:'Poppins', sans-serif;
+            margin:0;
         }
 
-        h2 {
-            margin-bottom:10px;
+        .container {
+            max-width:1100px;
+            margin:40px auto;
+            padding:20px;
+        }
+
+        h1 {
+            margin-bottom:5px;
+            font-weight:600;
+        }
+
+        .subtitle {
+            color:#aaa;
+            margin-bottom:25px;
         }
 
         .card {
             background:#121212;
             padding:20px;
-            border-radius:10px;
-            margin-bottom:20px;
+            border-radius:12px;
+            box-shadow:0 0 15px rgba(255,215,0,0.05);
+        }
+
+        .search-box {
+            display:flex;
+            gap:10px;
         }
 
         input {
+            flex:1;
             padding:12px;
             background:#000;
-            color:#fff;
             border:1px solid #333;
-            width:260px;
-            border-radius:5px;
+            color:#fff;
+            border-radius:8px;
+        }
+
+        input:focus {
+            border-color:#c9a227;
         }
 
         button {
             padding:12px 20px;
             background:#c9a227;
             border:none;
-            margin-left:10px;
+            border-radius:8px;
+            color:#000;
+            font-weight:600;
             cursor:pointer;
-            border-radius:5px;
+        }
+
+        button:hover {
+            background:#e6c200;
+        }
+
+        .table-card {
+            margin-top:25px;
+            background:#121212;
+            padding:20px;
+            border-radius:12px;
+        }
+
+        .count {
+            float:right;
+            color:#c9a227;
+            font-size:14px;
         }
 
         table {
             width:100%;
-            margin-top:10px;
             border-collapse:collapse;
+            margin-top:10px;
         }
 
         th, td {
-            padding:12px;
-            border-bottom:1px solid #333;
+            padding:14px;
+            text-align:left;
         }
 
         th {
             color:#aaa;
+            border-bottom:1px solid #333;
+            cursor:pointer;
+        }
+
+        tr {
+            border-bottom:1px solid #222;
         }
 
         tr:hover {
             background:#1a1a1a;
         }
 
-        .pagination {
-            margin-top:20px;
-        }
-
-        .pagination button {
-            margin-right:5px;
-        }
-
-        .count {
-            float:right;
-            color:#c9a227;
+        .highlight {
+            color:#e6c200;
+            font-weight:600;
         }
 
         .no-data {
-            margin-top:20px;
-            padding:15px;
-            background:#1a1a1a;
-            border-radius:8px;
+            text-align:center;
+            padding:20px;
             color:#bbb;
         }
+
+        .pagination {
+            margin-top:20px;
+            display:flex;
+            justify-content:center;
+            gap:10px;
+        }
+
+        .pagination button {
+            min-width:80px;
+        }
+
+        .city-label {
+            color:#aaa;
+            margin-bottom:10px;
+        }
     </style>
+
+    <!-- Sorting Script -->
+    <script>
+        function sortTable(colIndex) {
+            const table = document.getElementById("txnTable");
+            const rows = Array.from(table.rows).slice(1);
+
+            rows.sort((a, b) => {
+                let x = a.cells[colIndex].innerText;
+                let y = b.cells[colIndex].innerText;
+
+                if (!isNaN(x) && !isNaN(y)) {
+                    return parseFloat(x) - parseFloat(y);
+                }
+                return x.localeCompare(y);
+            });
+
+            rows.forEach(row => table.appendChild(row));
+        }
+    </script>
 </head>
 
 <body>
 
-<h2>Physical Gold Transactions</h2>
-<p style="color:#aaa;">Search physical gold transactions by city</p>
+<div class="container">
 
-<div class="card">
-    <form th:action="@{/physical/view}" method="get">
-        <input type="text" name="city" placeholder="Enter city (e.g. Mumbai)" required>
-        <button type="submit">Search</button>
-    </form>
-</div>
+    <h1>Physical Gold Transactions</h1>
+    <div class="subtitle">Track physical gold delivery requests by city</div>
 
-<!-- RESULTS BLOCK -->
-<div th:if="${transactions != null}">
-
-    <!-- NO DATA -->
-    <div class="no-data"
-         th:if="${#lists.isEmpty(transactions)}">
-        No transactions found for this city.
+    <div class="card">
+        <form th:action="@{/physical/view}" method="get" class="search-box">
+            <input type="text" name="city" placeholder="Enter city (e.g. Mumbai)" required>
+            <button type="submit">Search</button>
+        </form>
     </div>
 
-    <!-- TABLE -->
-    <div th:if="${!#lists.isEmpty(transactions)}">
+    <div th:if="${transactions != null}" class="table-card">
 
-        <span class="count"
-              th:text="${#lists.size(transactions)} + ' RECORDS'"></span>
+        <!-- CITY -->
+        <div th:if="${city != null}" class="city-label">
+            Showing results for:
+            <span class="highlight" th:text="${city}"></span>
+        </div>
 
-        <table>
+        <!-- EMPTY -->
+        <div th:if="${#lists.isEmpty(transactions)}" class="no-data">
+            No transactions found for this city.
+        </div>
 
-            <tr>
-                <th>#</th>
-                <th>User</th>
-                <th>Branch</th>
-                <th>Quantity (g)</th>
-                <th>Date</th>
-                <th>City</th>
-            </tr>
+        <!-- TABLE -->
+        <div th:if="${!#lists.isEmpty(transactions)}">
 
-            <tr th:each="txn, stat : ${transactions}">
-                <td th:text="${stat.count + (currentPage * pageSize)}"></td>
-                <td th:text="${txn.userName}"></td>
-                <td th:text="${txn.branchName}"></td>
-                <td th:text="${txn.quantity}"></td>
-                <td th:text="${#temporals.format(txn.requestDate, 'dd-MM-yyyy HH:mm')}"></td>
-                <td th:text="${txn.deliveryAddress.city}"></td>
-            </tr>
+            <span class="count"
+                  th:text="${#lists.size(transactions)} + ' records found'"></span>
 
-        </table>
+            <table id="txnTable">
 
-        <!-- PAGINATION -->
-        <div class="pagination">
+                <tr>
+                    <th onclick="sortTable(0)">#</th>
+                    <th onclick="sortTable(1)">User</th>
+                    <th onclick="sortTable(2)">Branch</th>
+                    <th onclick="sortTable(3)">Quantity</th>
+                    <th onclick="sortTable(4)">Date</th>
+                    <th onclick="sortTable(5)">City</th>
+                </tr>
 
-            <a th:if="${currentPage > 0}"
-               th:href="@{/physical/view(city=${city}, page=${currentPage-1})}">
-                <button>Prev</button>
-            </a>
+                <tr th:each="txn, stat : ${transactions}">
+                    <td th:text="${stat.count + (currentPage * pageSize)}"></td>
+                    <td th:text="${txn.userName}"></td>
+                    <td th:text="${txn.branchName}"></td>
+                    <td class="highlight" th:text="${txn.quantity}"></td>
+                    <td th:text="${#temporals.format(txn.requestDate, 'dd MMM yyyy, HH:mm')}"></td>
+                    <td th:text="${txn.deliveryAddress.city}"></td>
+                </tr>
 
-            <span th:text="'Page ' + (${currentPage}+1)"></span>
+            </table>
 
-            <a th:if="${hasNext}"
-               th:href="@{/physical/view(city=${city}, page=${currentPage+1})}">
-                <button>Next</button>
-            </a>
+            <!-- PAGINATION -->
+            <div class="pagination">
+
+                <a th:if="${currentPage > 0}"
+                   th:href="@{/physical/view(city=${city}, page=${currentPage-1})}">
+                    <button>Prev</button>
+                </a>
+
+                <span th:text="'Page ' + (${currentPage}+1)"></span>
+
+                <a th:if="${hasNext}"
+                   th:href="@{/physical/view(city=${city}, page=${currentPage+1})}">
+                    <button>Next</button>
+                </a>
+
+            </div>
 
         </div>
 
