@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Digital Gold Wallet — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com"
+	crossorigin="anonymous" />
+<link
+	href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,400&family=DM+Sans:wght@300;400;500&display=swap"
+	rel="stylesheet" />
+
+<style>
+*, *::before, *::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+:root {
+	--gold: #C9A84C;
+	--gold-light: #E8C96C;
+	--gold-pale: #F5E9C4;
+	--gold-dim: #8a6c2a;
+	--dark: #0D0D0D;
+	--dark-card: #141414;
+	--dark-inner: #1C1C1C;
+	--border: rgba(201, 168, 76, .14);
+	--border-hi: rgba(201, 168, 76, .30);
+	--text-muted: rgba(245, 233, 196, .40);
+	--text-dim: rgba(245, 233, 196, .65);
+}
+
+body {
+	background: var(--dark);
+	color: var(--gold-pale);
+	font-family: 'DM Sans', sans-serif;
+	min-height: 100vh;
+}
+
+/* ── Top Bar ── */
+.topbar {
+	height: 56px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 2.5rem;
+	border-bottom: 1px solid var(--border);
+	background: var(--dark);
+}
+
+.brand {
+	display: flex;
+	align-items: center;
+	gap: .9rem;
+}
+
+.brand-icon {
+	width: 32px;
+	height: 32px;
+	border: 1px solid var(--gold-dim);
+	border-radius: 6px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--gold);
+	font-size: 14px;
+}
+
+.brand-name {
+	font-family: 'Cormorant Garamond', serif;
+	font-size: 1.05rem;
+	letter-spacing: .14em;
+	color: var(--gold);
+	text-transform: uppercase;
+}
+
+.brand-sub {
+	font-size: .58rem;
+	letter-spacing: .24em;
+	color: var(--text-muted);
+	text-transform: uppercase;
+	margin-top: 1px;
+}
+
+.topbar-badge {
+	font-size: .55rem;
+	letter-spacing: .22em;
+	text-transform: uppercase;
+	color: var(--dark);
+	background: linear-gradient(135deg, #B8922E, #E0B84A);
+	padding: .28rem .8rem;
+	border-radius: 20px;
+}
+
+/* ── Hero ── */
+.hero {
+	max-width: 1100px;
+	margin: 0 auto;
+	padding: 3.5rem 2.5rem 2.5rem;
+	border-bottom: 1px solid var(--border);
+}
+
+.hero-eyebrow {
+	font-size: .58rem;
+	letter-spacing: .35em;
+	text-transform: uppercase;
+	color: var(--gold-dim);
+	margin-bottom: .7rem;
+}
+
+.hero-title {
+	font-family: 'Cormorant Garamond', serif;
+	font-size: clamp(2rem, 5vw, 3.2rem);
+	font-weight: 300;
+	line-height: 1.1;
+	color: var(--gold-pale);
+}
+
+.hero-title em {
+	font-style: italic;
+	color: var(--gold-light);
+}
+
+.hero-desc {
+	margin-top: .9rem;
+	font-size: .82rem;
+	font-weight: 300;
+	color: var(--text-dim);
+	line-height: 1.7;
+	max-width: 500px;
+}
+
+/* ── Main ── */
+.main {
+	max-width: 1100px;
+	margin: 0 auto;
+	padding: 2.5rem 2.5rem 4rem;
+}
+
+.section-label {
+	font-size: .55rem;
+	letter-spacing: .32em;
+	text-transform: uppercase;
+	color: var(--text-muted);
+	margin-bottom: 1.2rem;
+	padding-bottom: .7rem;
+	border-bottom: 1px solid var(--border);
+}
+
+/* ── Grids ── */
+.grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 1rem;
+	margin-bottom: 2.5rem;
+}
+
+.grid-wide {
+	grid-template-columns: repeat(2, 1fr);
+}
+
+@media ( max-width : 860px) {
+	.grid, .grid-wide {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media ( max-width : 520px) {
+	.grid, .grid-wide {
+		grid-template-columns: 1fr;
+	}
+	.topbar {
+		padding: 0 1.2rem;
+	}
+	.hero, .main {
+		padding-left: 1.2rem;
+		padding-right: 1.2rem;
+	}
+}
+
+/* ── Card ── */
+.card {
+	display: block;
+	text-decoration: none;
+	color: inherit;
+	background: var(--dark-card);
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	padding: 1.8rem;
+	transition: border-color .2s, background .2s;
+}
+
+.card:hover {
+	border-color: var(--border-hi);
+	background: var(--dark-inner);
+}
+
+.card-icon {
+	font-size: 1.4rem;
+	margin-bottom: 1rem;
+}
+
+.card-tag {
+	font-size: .52rem;
+	letter-spacing: .28em;
+	text-transform: uppercase;
+	color: var(--gold-dim);
+	margin-bottom: .35rem;
+}
+
+.card-title {
+	font-family: 'Cormorant Garamond', serif;
+	font-size: 1.2rem;
+	font-weight: 400;
+	color: var(--gold-pale);
+	margin-bottom: .6rem;
+	line-height: 1.2;
+}
+
+.card:hover .card-title {
+	color: var(--gold-light);
+}
+
+.card-desc {
+	font-size: .76rem;
+	font-weight: 300;
+	color: var(--text-dim);
+	line-height: 1.65;
+	margin-bottom: 1.4rem;
+}
+
+.card-link {
+	font-size: .58rem;
+	letter-spacing: .2em;
+	text-transform: uppercase;
+	color: var(--gold);
+}
+
+/* ── Footer ── */
+.footer {
+	border-top: 1px solid var(--border);
+	padding: 1.2rem 2.5rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.footer-text {
+	font-size: .55rem;
+	letter-spacing: .2em;
+	text-transform: uppercase;
+	color: var(--text-muted);
+}
+</style>
+</head>
+<body>
+
+	<header class="topbar">
+		<div class="brand">
+			<div class="brand-icon">◈</div>
+			<div>
+				<div class="brand-name">Digital Gold Wallet</div>
+				<div class="brand-sub">Command Centre</div>
+			</div>
+		</div>
+		<span class="topbar-badge">Admin · v1.0</span>
+	</header>
+
+	<section class="hero">
+		<p class="hero-eyebrow">Dashboard</p>
+		<h1 class="hero-title">
+			Gold Portfolio <em>Management</em>
+		</h1>
+		<p class="hero-desc">Monitor virtual and physical gold holdings,
+			explore user portfolios, track branch transactions, and manage vendor
+			data.</p>
+	</section>
+
+	<div class="main">
+
+		<p class="section-label">Core Features</p>
+		<div class="grid grid-wide">
+
+			<a href="/portfolio-lookup" class="card">
+				<div class="card-icon">👤</div>
+				<p class="card-tag">Users</p>
+				<h2 class="card-title">User Portfolio Lookup</h2>
+				<p class="card-desc">View a complete overview of any user's gold
+					holdings, account balance, address, and full transaction history.</p> <span
+				class="card-link">Open →</span>
+			</a> <a href="/top-holdings" class="card">
+				<div class="card-icon">🏆</div>
+				<p class="card-tag">Rankings</p>
+				<h2 class="card-title">Top Gold Holdings</h2>
+				<p class="card-desc">Retrieve the leaderboard of users ranked by
+					combined virtual and physical gold weight. Filter by count.</p> <span
+				class="card-link">Open →</span>
+			</a>
+
+		</div>
+
+		<p class="section-label">Transactions &amp; Vendors</p>
+		<div class="grid">
+
+			<a href="/physical/view" class="card">
+				<div class="card-icon">🏙️</div>
+				<p class="card-tag">Physical Transactions</p>
+				<h2 class="card-title">Physical Transactions by City</h2>
+				<p class="card-desc">Search physical gold delivery requests by
+					city with paginated, sortable results.</p> <span class="card-link">Open
+					→</span>
+			</a> <a href="/branch/view" class="card">
+				<div class="card-icon">🏢</div>
+				<p class="card-tag">Branch Transactions</p>
+				<h2 class="card-title">Transactions by Branch</h2>
+				<p class="card-desc">Look up all gold transactions linked to a
+					specific branch ID — user, vendor, quantity, and date.</p> <span
+				class="card-link">Open →</span>
+			</a> <a href="/physical-gold" class="card">
+				<div class="card-icon">🪙</div>
+				<p class="card-tag">Vendor Operations</p>
+				<h2 class="card-title">Vendor Gold Holdings</h2>
+				<p class="card-desc">Filter physical gold transactions handled
+					by a branch's vendor — track who requested what and when.</p> <span
+				class="card-link">Open →</span>
+			</a> <a href="/vendors/by-quantity" class="card">
+				<div class="card-icon">⚖️</div>
+				<p class="card-tag">Vendor Filter</p>
+				<h2 class="card-title">Vendors by Quantity</h2>
+				<p class="card-desc">Filter vendors whose total gold stock
+					exceeds a minimum threshold, with price data and pagination.</p> <span
+				class="card-link">Open →</span>
+			</a>
+
+		</div>
+
+	</div>
+
+	<footer class="footer">
+		<span class="footer-text">Digital Gold Wallet API · Backend @
+			localhost:8085</span> <span class="footer-text">v1.0</span>
+	</footer>
+
+</body>
+</html>
