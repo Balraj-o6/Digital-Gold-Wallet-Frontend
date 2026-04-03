@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Gold Wallet — Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+
+        /* ── Reset & Base ── */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-primary:    #0e0e0e;
+            --bg-secondary:  #141414;
+            --bg-card:       #181818;
+            --bg-input:      #1a1a1a;
+            --border:        #2a2a2a;
+            --border-light:  #222;
+            --gold:          #c9a84c;
+            --gold-light:    #d4b86a;
+            --gold-dim:      #9a7a38;
+            --gold-muted:    rgba(201,168,76,0.12);
+            --text-primary:  #e8e0d0;
+            --text-secondary:#8a8070;
+            --text-muted:    #4a4540;
+            --green:         #2a7a4a;
+            --green-text:    #5abf80;
+            --radius:        6px;
+        }
+
+        html, body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 400;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ── Header / Navbar ── */
+        .navbar {
+            display: flex;
+            align-items: center;
+            padding: 0 40px;
+            height: 56px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .nav-logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+        }
+
+        .nav-logo-title {
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-primary);
+        }
+
+        .nav-logo-sub {
+            font-size: 9px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+
+        /* ── Main Content ── */
+        .main {
+            max-width: 1060px;
+            margin: 0 auto;
+            padding: 60px 40px 80px;
+        }
+
+        /* ── Page Title ── */
+        .page-header {
+            margin-bottom: 36px;
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            font-weight: 400;
+            color: var(--text-primary);
+            line-height: 1.15;
+            margin-bottom: 10px;
+        }
+
+        .page-title em {
+            font-style: italic;
+            color: var(--gold);
+        }
+
+        .page-subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        /* ── Filter Card ── */
+        .filter-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px 32px;
+            margin-bottom: 44px;
+        }
+
+        .filter-label {
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 14px;
+        }
+
+        .filter-row {
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+
+        .input-prefix {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-right: none;
+            border-radius: var(--radius) 0 0 var(--radius);
+            padding: 0 14px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 300;
+        }
+
+        .filter-input {
+            flex: 1;
+            height: 48px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-left: none;
+            border-right: none;
+            color: var(--text-primary);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            padding: 0 16px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .filter-input:focus {
+            border-color: var(--gold-dim);
+        }
+
+        .filter-btn {
+            height: 48px;
+            padding: 0 28px;
+            background: var(--gold);
+            color: #0e0e0e;
+            border: none;
+            border-radius: 0 var(--radius) var(--radius) 0;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+
+        .filter-btn:hover { background: var(--gold-light); }
+
+        /* ── Results header ── */
+        .results-header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+
+        .results-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 400;
+            color: var(--text-primary);
+        }
+
+        .results-meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+            letter-spacing: 0.5px;
+        }
+
+        .results-meta span {
+            color: var(--gold);
+            font-weight: 500;
+        }
+
+        /* ── Table ── */
+        .table-wrap {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead tr {
+            border-bottom: 1px solid var(--border);
+        }
+
+        thead th {
+            padding: 14px 20px;
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            text-align: left;
+        }
+
+        thead th:first-child { width: 52px; text-align: center; }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border-light);
+            transition: background 0.15s;
+        }
+
+        tbody tr:last-child { border-bottom: none; }
+
+        tbody tr:hover { background: rgba(201,168,76,0.04); }
+
+        tbody td {
+            padding: 18px 20px;
+            font-size: 13px;
+            color: var(--text-primary);
+            vertical-align: top;
+        }
+
+        tbody td:first-child {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 500;
+            vertical-align: middle;
+        }
+
+        /* ── User name cell ── */
+        .user-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .user-id {
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 0.3px;
+        }
+
+        /* ── Gold values ── */
+        .gold-val {
+            color: var(--gold);
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+        .gold-val-total {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .gold-unit {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-left: 2px;
+        }
+
+        /* ── Status badge ── */
+        .badge-active {
+            display: inline-block;
+            background: rgba(42,122,74,0.25);
+            color: var(--green-text);
+            border: 1px solid rgba(90,191,128,0.2);
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 4px 10px;
+        }
+
+        /* ── Empty state ── */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon { font-size: 36px; margin-bottom: 12px; }
+        .empty-state-text { font-size: 14px; }
+
+        /* ── Pagination ── */
+        .pagination-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 24px;
+            border-top: 1px solid var(--border);
+            background: var(--bg-card);
+            border-radius: 0 0 var(--radius) var(--radius);
+        }
+
+        .pagination-info {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .pagination-info strong { color: var(--text-primary); }
+
+        .pagination-btns {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .page-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--border);
+            background: var(--bg-input);
+            color: var(--text-secondary);
+            border-radius: 4px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .page-btn:hover {
+            border-color: var(--gold-dim);
+            color: var(--gold);
+        }
+
+        .page-btn.active {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: #0e0e0e;
+            font-weight: 600;
+        }
+
+        .page-btn.nav-btn {
+            width: auto;
+            padding: 0 12px;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* ── Error banner ── */
+        .error-banner {
+            background: rgba(180,50,50,0.1);
+            border: 1px solid rgba(180,50,50,0.3);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            color: #e06060;
+            font-size: 13px;
+            margin-bottom: 28px;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     NAVBAR
+══════════════════════════════════════ -->
+<nav class="navbar">
+    <div class="nav-logo">
+        <div class="nav-logo-icon">◈</div>
+        <div class="nav-logo-text">
+            <span class="nav-logo-title">Digital Gold Wallet</span>
+            <span class="nav-logo-sub">Admin Panel</span>
+        </div>
+    </div>
+</nav>
+
+<!-- ══════════════════════════════════════
+     MAIN CONTENT
+══════════════════════════════════════ -->
+<main class="main">
+
+    <!-- Page Title -->
+    <div class="page-header">
+        <h1 class="page-title">
+            Top <em>Gold Holdings</em> Filter
+        </h1>
+        <p class="page-subtitle">
+            Retrieve top users ranked by combined virtual and physical gold holdings.
+        </p>
+    </div>
+
+    <!-- Filter Card -->
+    <div class="filter-card">
+        <div class="filter-label">Number of Top Users</div>
+        <form method="get" action="/top-holdings">
+            <div class="filter-row">
+                <span class="input-prefix">#</span>
+                <input
+                        class="filter-input"
+                        type="number"
+                        name="limit"
+                        th:value="${limit}"
+                        placeholder="5"
+                        min="1"
+                        max="100"
+                />
+                <button class="filter-btn" type="submit">Search Users</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Error banner if backend is down -->
+    <div class="error-banner"
+         th:if="${topUsers == null or #lists.isEmpty(topUsers)}">
+        ⚠ No data returned. Ensure your backend is running on
+        <strong>localhost:8085</strong> and the database has users.
+    </div>
+
+    <!-- Results section — only shows when data exists -->
+    <div th:if="${topUsers != null and not #lists.isEmpty(topUsers)}">
+
+        <!-- Results Header -->
+        <div class="results-header">
+            <h2 class="results-title">Results</h2>
+            <div class="results-meta">
+                <span th:text="${#lists.size(topUsers)}">0</span>
+                USER(S) FOUND &nbsp;·&nbsp; TOP
+                <span th:text="${limit}">5</span>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Virtual Gold (g)</th>
+                    <th>Physical Gold (g)</th>
+                    <th>Total Gold (g)</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody id="tableBody">
+                <tr th:each="user, iterStat : ${topUsers}">
+
+                    <!-- Row number -->
+                    <td th:text="${iterStat.count}">1</td>
+
+                    <!-- User name + ID -->
+                    <td>
+                        <div class="user-name" th:text="${user.userName}">Name</div>
+                        <div class="user-id" th:text="'ID #' + ${user.userId}">ID #1</div>
+                    </td>
+
+                    <!-- Email -->
+                    <td th:text="${user.userEmail}">email</td>
+
+                    <!-- Virtual gold -->
+                    <td>
+                        <span class="gold-val" th:text="${user.virtualGoldQuantity}">0</span>
+                        <span class="gold-unit">g</span>
+                    </td>
+
+                    <!-- Physical gold -->
+                    <td>
+                        <span class="gold-val" th:text="${user.physicalGoldQuantity}">0</span>
+                        <span class="gold-unit">g</span>
+                    </td>
+
+                    <!-- Total gold -->
+                    <td>
+                        <span class="gold-val-total" th:text="${user.totalGoldQuantity}">0</span>
+                        <span class="gold-unit">g</span>
+                    </td>
+
+                    <!-- Status badge -->
+                    <td><span class="badge-active">Active</span></td>
+
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- Pagination bar -->
+            <div class="pagination-wrap">
+                <div class="pagination-info">
+                    Showing
+                    <strong>1</strong> –
+                    <strong th:text="${#lists.size(topUsers)}">5</strong>
+                    of
+                    <strong th:text="${#lists.size(topUsers)}">5</strong>
+                    users
+                </div>
+                <div class="pagination-btns" id="paginationBtns">
+                    <!-- Rendered by JS below -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<!-- ══════════════════════════════════════
+     PAGINATION JS (client-side, 10 rows/page)
+══════════════════════════════════════ -->
+<script>
+    const ROWS_PER_PAGE = 10;
+    const tbody        = document.getElementById('tableBody');
+    const paginationEl = document.getElementById('paginationBtns');
+    const infoEl       = document.querySelector('.pagination-info');
+
+    if (tbody) {
+        const allRows = Array.from(tbody.querySelectorAll('tr'));
+        const total   = allRows.length;
+        const pages   = Math.ceil(total / ROWS_PER_PAGE);
+        let current   = 1;
+
+        function showPage(p) {
+            current = p;
+            allRows.forEach((row, i) => {
+                row.style.display =
+                    (i >= (p - 1) * ROWS_PER_PAGE && i < p * ROWS_PER_PAGE)
+                        ? '' : 'none';
+            });
+            const start = (p - 1) * ROWS_PER_PAGE + 1;
+            const end   = Math.min(p * ROWS_PER_PAGE, total);
+            if (infoEl) {
+                infoEl.innerHTML =
+                    'Showing <strong>' + start + '</strong> – <strong>' + end +
+                    '</strong> of <strong>' + total + '</strong> users';
+            }
+            renderPagination();
+        }
+
+        function renderPagination() {
+            if (!paginationEl) return;
+            paginationEl.innerHTML = '';
+
+            // Previous button
+            const prev = document.createElement('button');
+            prev.className = 'page-btn nav-btn';
+            prev.textContent = '‹ Previous';
+            prev.disabled = current === 1;
+            prev.onclick = () => showPage(current - 1);
+            paginationEl.appendChild(prev);
+
+            // Page number buttons
+            for (let i = 1; i <= pages; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'page-btn' + (i === current ? ' active' : '');
+                btn.textContent = i;
+                btn.onclick = (function(pg){ return () => showPage(pg); })(i);
+                paginationEl.appendChild(btn);
+            }
+
+            // Next button
+            const next = document.createElement('button');
+            next.className = 'page-btn nav-btn';
+            next.textContent = 'Next ›';
+            next.disabled = current === pages;
+            next.onclick = () => showPage(current + 1);
+            paginationEl.appendChild(next);
+        }
+
+        // Init
+        if (total > 0) {
+            showPage(1);
+        }
+    }
+</script>
+
+</body>
+</html>
