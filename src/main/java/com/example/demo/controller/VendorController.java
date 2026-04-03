@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.AdminVendorDTO;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,11 +18,10 @@ public class VendorController {
 
     private final WebClient webClient;
 
-    public VendorController(WebClient.Builder webClientBuilder) {
-        this.webClient = webClientBuilder
-                .baseUrl("http://localhost:8085")
-                .build();
-    }
+    public VendorController(@Value("${backend.baseUrl:http://localhost:8085}") String backendBaseUrl) {
+		this.webClient = WebClient.builder().baseUrl(backendBaseUrl).build();
+	}
+    
 
     @GetMapping("/vendors/by-quantity")
     public String getVendorsByQuantity(
