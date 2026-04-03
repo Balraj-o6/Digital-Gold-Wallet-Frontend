@@ -18,20 +18,25 @@ public class PhysicalGoldController {
         this.service = service;
     }
 
-    // Load page
     @GetMapping
     public String loadPage() {
         return "vendor-gold";
     }
 
-    // Search by branchId
+
     @GetMapping("/search")
     public String getTransactions(@RequestParam Integer branchId, Model model) {
 
-        List<PhysicalGoldTransactionDTO> transactions =
-                service.getTransactionsByBranchId(branchId);
+        try {
+            List<PhysicalGoldTransactionDTO> transactions =
+                    service.getTransactionsByBranchId(branchId);
 
-        model.addAttribute("transactions", transactions);
+            model.addAttribute("transactions", transactions);
+
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "Branch ID not found");
+        }
+
         model.addAttribute("branchId", branchId);
 
         return "vendor-gold";

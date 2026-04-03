@@ -3,7 +3,6 @@
 <head>
     <title>Vendor Gold Holdings</title>
 
-    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 
     <style>
@@ -20,7 +19,6 @@
             padding-top: 40px;
         }
 
-        /* HEADER */
         .title {
             font-family: 'Playfair Display', serif;
             font-size: 42px;
@@ -37,7 +35,6 @@
             margin-bottom: 30px;
         }
 
-        /* CARD */
         .card {
             background: #111;
             border: 1px solid #222;
@@ -88,7 +85,7 @@
             background: #c19b2e;
         }
 
-        /* RESULTS HEADER */
+
         .results-header {
             display: flex;
             justify-content: space-between;
@@ -105,7 +102,7 @@
             font-size: 14px;
         }
 
-        /* TABLE */
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -141,7 +138,7 @@
 
 <div class="container">
 
-    <!-- TITLE -->
+
     <div class="title">
         Vendor <span>Gold Holdings</span> Filter
     </div>
@@ -149,11 +146,11 @@
         Retrieve all transactions for a specific branch.
     </div>
 
-    <!-- SEARCH FORM -->
+
     <div class="card">
         <div class="card-label">BRANCH ID</div>
 
-        <!-- 🔥 THIS MATCHES YOUR CONTROLLER -->
+
         <form action="/physical-gold/search" method="get" class="search-box">
             <input type="number"
                    name="branchId"
@@ -165,14 +162,19 @@
         </form>
     </div>
 
-    <!-- RESULTS -->
+    <div th:if="${errorMessage}"
+         style="background:#2a0f0f; color:#ff6b6b; padding:12px; border-radius:8px; margin-bottom:20px;">
+        <span th:text="${errorMessage}"></span>
+    </div>
+
+
     <div class="results-header" th:if="${transactions}">
         <h2>Results</h2>
         <div class="results-count"
              th:text="${#lists.size(transactions)} + ' TRANSACTIONS FOUND'"></div>
     </div>
 
-    <!-- TABLE -->
+
     <table th:if="${transactions}">
         <thead>
         <tr>
