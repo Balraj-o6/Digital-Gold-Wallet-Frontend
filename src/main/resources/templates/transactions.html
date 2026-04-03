@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Transactions</title>
+    <style>
+        body { background:#0f0f0f; color:#ffd700; font-family:Arial; }
+        table { width:100%; border-collapse:collapse; margin-top:20px; }
+        th, td { border:1px solid #333; padding:10px; text-align:center; }
+        th { background:#222; }
+        tr:nth-child(even){ background:#1a1a1a; }
+    </style>
+</head>
+<body>
+
+<h2>Transactions - Branch <span th:text="${branchId}"></span></h2>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>User</th>
+        <th>Vendor</th>
+        <th>Type</th>
+        <th>Status</th>
+        <th>Amount</th>
+    </tr>
+
+    <tr th:each="txn : ${transactions}">
+        <td th:text="${txn.transactionId}"></td>
+        <td th:text="${txn.userName}"></td>
+        <td th:text="${txn.vendorName}"></td>
+        <td th:text="${txn.type}"></td>
+        <td th:text="${txn.status}"></td>
+        <td th:text="${txn.amount}"></td>
+    </tr>
+
+</table>
+
+</body>
+</html>
